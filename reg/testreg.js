@@ -40,3 +40,7 @@ if(arr2 == null) {
 } else {
     console.log("arr2.length:"+arr2.length);
 }
+
+
+    console.log("-------i");
+    console.log(/aaaa/i.test("AAAAAAAAAAA"));

@@ -40,3 +40,52 @@ array = str.match(reg);
 for(var i=0,a;a=array[i++];) {
     console.log(a);
 }
+console.log("--------------")
+reg = /shell:am\s+force-stop\s+(.*\b)/;
+var shellstr="     shell:am   force-stop     com.testbirda ; ddd; ;";
+r=reg.exec(shellstr);
+console.log(r[0] + "#" +r[1]);
+if(/com.testbirda/.test(r[1])) {
+    console.log("MATCH:"+r[1]);
+}
+console.log("-------force-stop|path-------")
+reg = /shell:am\s+(force-stop|path)\s+([a-z.]+)/;
+var shellstr="     shell:am   force-stop     com.testbirda ; ddd; ;";
+r=reg.exec(shellstr);
+console.log(r[0] + "#" +r[1]);
+if(/com.testbirda/.test(r[1])) {
+    console.log("MATCH:"+r[1]);
+}
+console.log("--------------")
+reg = /fdasfdasfa/;
+var shellstr="     shell:am   force-stop     com.testbirda ; ddd; ;";
+r=reg.exec(shellstr);
+if(r == null) {
+    console.log("r == null");
+}
+
+console.log("--------------")
+reg = /^shell:\s*$/;
+var shellstr="shell:    ";
+//var shellstr="shell:    ";
+//var shellstr="shell:   s ";
+//var shellstr="shell:   a ";
+
+r=reg.exec(shellstr);
+if(r == null) {
+    console.log("r == null");
+} else {
+console.log(r[0].length);
+}
+console.log("--------------")
+// test .
+reg = /com\.testbird/;
+reg = /com.testbird/; // error
+var shellstr="     shell:am   force-stop     comatestbirda ; ddd; ;";
+r=reg.exec(shellstr);
+if(r == null) {
+    console.log("r == null");
+} else {
+    console.log(r[0] + "#" +r[1]);
+}
+console.log("--------------")
