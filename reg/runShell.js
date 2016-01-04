@@ -53,3 +53,15 @@
                   return val;
                       };
 
+
+
+console.log("----set-----");
+var obj = new Set();
+obj.add(1);
+obj.add(2);
+obj.add("dsdfsad2");
+console.log(obj.has(1));
+console.log(obj);
+//for (item of obj.keys()) console.log(item);
+for (item of obj) console.log(item);
+console.log("----set-----!");

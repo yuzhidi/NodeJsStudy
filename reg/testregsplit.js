@@ -9,7 +9,7 @@ console.log("length:" + arr1.length);
 for(var  i=0,a;a=arr1[i++];) {
     console.log(i+":"+a);
 }
-console.log("-------------------");
+console.log("--- shell:split(;) ----------------");
 var arr = "shell:".split(";");
 console.log("length:" + arr.length);
 for(var  i=0,a;a=arr[i++];) {
