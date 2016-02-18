@@ -1,11 +1,14 @@
 var net = require('net');
 var WebSocket = require('ws')
+var bufferConcat = require('array-buffer-concat')
 
 var REMOTE_HOST = '127.0.0.1';
 var REMOTE_PORT = 6969;
 
 var client = new net.Socket();
 var isConnnected = false;
+
+var count = 0;
 
 var queue = require('block-queue');
 var qclient = undefined;
@@ -52,6 +55,8 @@ wss.on('error', function error(err) {
 });
 console.log("no blocking");
 
+
+var tmpbuffer = undefined;
 /**      **/
 var bconnectDevice = true;
 if(bconnectDevice) {
@@ -73,8 +78,23 @@ if(bconnectDevice) {
     //  client.destroy();
 
     if(qclient != undefined) {
-      console.log("client data len:"+data.length);
-      qclient.push(data);
+      console.log("push data");
+      if(tmpbuffer == undefined) {
+        console.log("count:"+count);
+        tmpbuffer = data;
+        count++;
+      }
+      else {
+        console.log("bufferconcat");
+        tmpbuffer = bufferConcat(tmpbuffer, data);
+      }
+      if(count == 20) {
+        count = 0;
+        console.log("qclient push");
+        qclient.push(tmpbuffer);
+        tmpbuffer = undefined;
+      }
+
     }
   });
 
@@ -82,5 +102,12 @@ if(bconnectDevice) {
   client.on('close', function() {
     console.log('Connection closed');
   });
+}
+
+function concatTypedArrays(a, b) { // a, b TypedArray of same type
+  var c = new (a.constructor)(a.length + b.length);
+  c.set(a, 0);
+  c.set(b, a.length);
+  return c;
 }
 
