@@ -2,9 +2,42 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <title></title>
+    <title>leo web audio</title>
 </head>
 <body>
+<script>
+    var context = undefined;
+    window.AudioContext = window.AudioContext || window.webkitAudioContext || window.mozAudioContext || window.msAudioContext;
+    if('webkitAudioContext' in window) {
+        console.log("webkitAudioContext");
+        context = new AudioContext();
+    }
 
+    var ws = new WebSocket('ws://127.0.0.1:8080');
+    ws.binaryType = 'arraybuffer'
+
+    ws.onmessage = function(msg) {
+        //console.log(msg);
+        // flags.binary will be set if a binary data is received.
+        // flags.masked will be set if the data was masked.
+        //console.log(data);
+//        playSound(msg.data);
+        context.decodeAudioData(msg.data , function(buffer) {
+                    playSound(buffer);
+                },
+                function(e) {
+                    console.log("decodeAudioData:"+e);
+                }
+        );
+    };
+
+    function playSound(buffer) {
+
+        var source = context.createBufferSource(); // 创建一个声音
+        source.buffer = buffer;        // 告诉该源播放何物
+        source.connect(context.destination);       //将该源与硬件相连
+        source.start(0);                          // 现在播放该实例
+    }
+</script>
 </body>
 </html>
