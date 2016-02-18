@@ -8,7 +8,7 @@ var client = new net.Socket();
 var isConnnected = false;
 
 var queue = require('block-queue');
-
+var qclient = undefined;
 var WebSocketServer = require('ws').Server
     , wss = new WebSocketServer({ port: 8080 });
 
@@ -17,24 +17,24 @@ wss.on('connection', function connection(ws) {
     console.log('received: %s', message);
   });
   isConnnected = true;
-
-  var q = queue(1, function(task, done) {
+  console.log("-------------send");
+  qclient = queue(1, function(task, done) {
     setTimeout(function() {
       //console.log(task);
       ws.send(task);
       done();
-    }, 5000);
+    }, 100);
   });
   //ws.send('something from server');
-  q.push('something from server');
-  q.push('something from server');
-  q.push('something from server');
+  //q.push('something from server');
+  //q.push('something from server');
+  //q.push('something from server');
 });
 
 console.log("no blocking");
 
 /**      **/
-var bconnectDevice = false;
+var bconnectDevice = true;
 if(bconnectDevice) {
   client.connect(REMOTE_PORT, REMOTE_HOST, function() {
 
@@ -52,7 +52,11 @@ if(bconnectDevice) {
     //process.stdout.write(data);
     // Close the client socket completely
     //  client.destroy();
-
+    console.log("client data len:"+data.length);
+    if(qclient != undefined) {
+      console.log("push data");
+      qclient.push(data);
+    }
   });
 
 // Add a 'close' event handler for the client socket
