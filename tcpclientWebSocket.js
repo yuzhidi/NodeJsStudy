@@ -26,9 +26,9 @@ wss.on('connection', function connection(ws) {
     }, 100);
   });
   //ws.send('something from server');
-  //q.push('something from server');
-  //q.push('something from server');
-  //q.push('something from server');
+  //qclient.push('something from server2');
+  //qclient.push('something from server3');
+  //qclient.push('something from server4');
 });
 
 console.log("no blocking");
