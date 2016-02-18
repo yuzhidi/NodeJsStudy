@@ -11,5 +11,6 @@ ws.on('open', function open() {
 ws.on('message', function(data, flags) {
     // flags.binary will be set if a binary data is received.
     // flags.masked will be set if the data was masked.
-    console.log(data);
+    //console.log(data);
+    process.stdout.write(data);
 });

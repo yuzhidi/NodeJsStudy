@@ -5,47 +5,35 @@ var REMOTE_HOST = '127.0.0.1';
 var REMOTE_PORT = 6969;
 
 var client = new net.Socket();
+var isConnnected = false;
 
-var vssport = 9910
+var queue = require('block-queue');
 
-function createServer() {
-  console.log('Starting WebSocket server for audio on port ' + vssport)
-  var wss = new WebSocket.Server({ // Create websocket server
-    port: vssport
-    , perMessageDeflate: false
-  })
-  var listeningListener, errorListener
-  return new Promise(function(resolve, reject) {
-    listeningListener = function() {
-      return resolve(wss)
-    }
-    errorListener = function(err) {
-      return reject(err)
-    }
-    wss.on('listening', listeningListener)
-    wss.on('error', errorListener)
-  })
-    //.finally(function() {
-    //  wss.removeListener('listening', listeningListener)
-    //  wss.removeListener('error', errorListener)
-    //})
+var WebSocketServer = require('ws').Server
+    , wss = new WebSocketServer({ port: 8080 });
 
-  return createServer()
-    .then(function(wss) {
-      wss.on('connection', function(ws) {
-        console.log('connection!!! audio !!!')
+wss.on('connection', function connection(ws) {
+  ws.on('message', function incoming(message) {
+    console.log('received: %s', message);
+  });
+  isConnnected = true;
 
-        ws.on('message', function(data) {
-          console.log('message: ' + data)
-        })
-        ws.on('close', function() {
-          console.log('closed')
-        })
-      })
-    })
-}
+  var q = queue(1, function(task, done) {
+    setTimeout(function() {
+      //console.log(task);
+      ws.send(task);
+      done();
+    }, 5000);
+  });
+  //ws.send('something from server');
+  q.push('something from server');
+  q.push('something from server');
+  q.push('something from server');
+});
 
-/////////////////////////////
+console.log("no blocking");
+
+/**      **/
 var bconnectDevice = false;
 if(bconnectDevice) {
   client.connect(REMOTE_PORT, REMOTE_HOST, function() {
@@ -61,7 +49,7 @@ if(bconnectDevice) {
   client.on('data', function(data) {
 
     // console.log('DATA: ' + data);
-    process.stdout.write(data);
+    //process.stdout.write(data);
     // Close the client socket completely
     //  client.destroy();
 
