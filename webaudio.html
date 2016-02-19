@@ -8,13 +8,18 @@
 <script>
     var context = undefined;
     window.AudioContext = window.AudioContext || window.webkitAudioContext || window.mozAudioContext || window.msAudioContext;
-    if('webkitAudioContext' in window) {
+//    if('webkitAudioContext' in window) {
         console.log("webkitAudioContext");
         context = new AudioContext();
-    }
+//    }
 
     var ws = new WebSocket('ws://127.0.0.1:8080');
     ws.binaryType = 'arraybuffer'
+
+    var count = 0;
+    var audiodata1 = undefined;
+    var audiodata2 = undefined;
+    var audiodata3 = undefined;
 
     ws.onmessage = function(msg) {
         //console.log(msg);
@@ -22,13 +27,28 @@
         // flags.masked will be set if the data was masked.
         //console.log(data);
 //        playSound(msg.data);
-        context.decodeAudioData(msg.data , function(buffer) {
-                    playSound(buffer);
-                },
-                function(e) {
-                    console.log("decodeAudioData:"+e);
-                }
-        );
+
+        if(++count == 1) {
+            audiodata1 = msg.data;
+        } else
+        if(count == 2) {
+            audiodata2 = msg.data;
+        }
+        else if(count ==3) {
+            audiodata3 = msg.data;
+        }else {
+                var datatotal = arrayBufferConcat(audiodata1, audiodata2, audiodata3);
+                count = 0;
+                context.decodeAudioData(datatotal , function(buffer) {
+                            playSound(buffer);
+                        },
+                        function(e) {
+                            console.log("decodeAudioData:"+e);
+                        }
+                );
+                audiodata = undefined;
+            }
+
     };
 
     function playSound(buffer) {
@@ -36,7 +56,28 @@
         var source = context.createBufferSource(); // 创建一个声音
         source.buffer = buffer;        // 告诉该源播放何物
         source.connect(context.destination);       //将该源与硬件相连
-        source.start(0);                          // 现在播放该实例
+        source.start();                          // 现在播放该实例
+    }
+
+    function arrayBufferConcat () {
+        var length = 0
+        var buffer = null
+
+        for (var i in arguments) {
+            buffer = arguments[i]
+            length += buffer.byteLength
+        }
+
+        var joined = new Uint8Array(length)
+        var offset = 0
+
+        for (var i in arguments) {
+            buffer = arguments[i]
+            joined.set(new Uint8Array(buffer), offset)
+            offset += buffer.byteLength
+        }
+
+        return joined.buffer
     }
 </script>
 </body>
