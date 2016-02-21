@@ -19,9 +19,20 @@ wss.on('connection', function connection(ws) {
   isConnnected = true;
   console.log("-------------send");
   qclient = queue(1, function(task, done) {
+
     setTimeout(function() {
       //console.log(task);
-      ws.send(task);
+      if(!isConnnected) {
+        return;
+      }
+      try {
+        ws.send(task);
+      } catch(e) {
+        console.error(e);
+        isConnnected = false;
+        qclient = undefined;
+      }
+
       done();
     }, 100);
   });
@@ -31,6 +42,14 @@ wss.on('connection', function connection(ws) {
   //qclient.push('something from server4');
 });
 
+wss.on('close', function close(code, message) {
+  console.log('disconnected'+message);
+  qclient = undefined;
+});
+
+wss.on('error', function error(err) {
+  console.log("error"+err);
+});
 console.log("no blocking");
 
 /**      **/
@@ -52,9 +71,9 @@ if(bconnectDevice) {
     //process.stdout.write(data);
     // Close the client socket completely
     //  client.destroy();
-    console.log("client data len:"+data.length);
+
     if(qclient != undefined) {
-      console.log("push data");
+      console.log("client data len:"+data.length);
       qclient.push(data);
     }
   });
