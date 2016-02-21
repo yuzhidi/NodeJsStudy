@@ -17,9 +17,7 @@
     ws.binaryType = 'arraybuffer'
 
     var count = 0;
-    var audiodata1 = undefined;
-    var audiodata2 = undefined;
-    var audiodata3 = undefined;
+    var audioArray = new Array();
 
     ws.onmessage = function(msg) {
         //console.log(msg);
@@ -28,17 +26,11 @@
         //console.log(data);
 //        playSound(msg.data);
 
-        if(++count == 1) {
-            audiodata1 = msg.data;
-        } else
-        if(count == 2) {
-            audiodata2 = msg.data;
-        }
-        else if(count ==3) {
-            audiodata3 = msg.data;
-        }else {
-                var datatotal = arrayBufferConcat(audiodata1, audiodata2, audiodata3);
+       count =  audioArray.push(msg.data)
+       if(count == 6)  {
+                var datatotal = arrayBufferConcat(audioArray[0], audioArray[1], audioArray[2], audioArray[3], audioArray[4], audioArray[5]);
                 count = 0;
+               audioArray = new Array();
                 context.decodeAudioData(datatotal , function(buffer) {
                             playSound(buffer);
                         },
