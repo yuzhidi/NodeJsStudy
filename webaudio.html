@@ -27,8 +27,16 @@
 //        playSound(msg.data);
 
        count =  audioArray.push(msg.data)
-       if(count == 6)  {
-                var datatotal = arrayBufferConcat(audioArray[0], audioArray[1], audioArray[2], audioArray[3], audioArray[4], audioArray[5]);
+
+        if(count == 6)  {
+            var datatotal = arrayBufferConcat(audioArray[0], audioArray[1], audioArray[2],
+                    audioArray[3], audioArray[4], audioArray[5]);
+            /*** want to test more buffer , open count == 12, comment out 6 ****/
+//       if(count == 12)  {
+//                var datatotal = arrayBufferConcat(audioArray[0], audioArray[1], audioArray[2],
+//                        audioArray[3], audioArray[4], audioArray[5],
+//                        audioArray[6], audioArray[7], audioArray[8],
+//                        audioArray[9], audioArray[10], audioArray[11]);
                 count = 0;
                audioArray = new Array();
                 context.decodeAudioData(datatotal , function(buffer) {
