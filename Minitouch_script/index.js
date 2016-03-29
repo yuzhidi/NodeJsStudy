@@ -23,6 +23,14 @@ function codeNcSetTimeout(string) {
             "       if(stdout) console.log(stdout);})" +
             ";}, %s);\n", string);
 }
+
+function codeNcCmd(_string , timeout) {
+    return util.format("setTimeout(function() {\n" +
+        "   exec('echo %s | nc localhost 1111', function(error, stdout, stderr) {\n"+
+        "       if(stdout) console.log(stdout);})" +
+        ";}, %s);\n", _string, timeout);
+}
+
 fs.readFile('minitouch.script', function(err, data) {
     if(err) throw err;
     //array = data.toString().split("\n");
@@ -32,20 +40,28 @@ fs.readFile('minitouch.script', function(err, data) {
     var currenttime;
     outfile.on('error', function(err) { /* error handling */ });
     for(i in array) {
-        //console.log(array[i]);
+        console.log(array[i]);
+        //console.log(/[dcmu]*/.exec(array[i]));
         //outfile.write(array[i]+"\n");
+        var lineArray = array[i].split(" ");
         if(i == 0) {
-            basetime = array[i].split(" ")[0];
+            basetime = lineArray[0];
             console.log("basetime", basetime);
             outfile.write(codeNcExec());
         }
-        currenttime = array[i].split(" ")[0];
+        currenttime =  lineArray[0];
         var time_out = currenttime - basetime;
         if(time_out < 0) {
             continue;
         }
+        console.log("arrylen", lineArray.length)
         //console.log(codeFunction(time_out));
-        outfile.write(codeNcSetTimeout(time_out));
+        var content="";
+        for(var i=1;i<lineArray.length;i++) {
+            content += " " + lineArray[i];
+        }
+        console.log("content:", content);
+        outfile.write(codeNcCmd(content , time_out));
 
     }
     outfile.end();
