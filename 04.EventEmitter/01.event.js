@@ -6,4 +6,8 @@ event.on('some_event', function() {
 }); 
 setTimeout(function() { 
         event.emit('some_event'); 
-}, 1000); 
+}, 1000);
+
+setTimeout(function() {
+        console.log('other event');
+}, 1000);
