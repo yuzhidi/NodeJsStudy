@@ -3,19 +3,31 @@
  */
 var fs = require("fs");
 var util = require('util');
+var exec = require('child_process').exec;
+
 //var data = fs.readFileSync("minitouch.script");
 //console.log(data.toString());
 //var codeTemplete = "setTimeout(function() {console.log("
 
 function codeFunction(string) {
-    return util.format("setTimeout(function() {console.log(%s)}, %s);",string, string);
+    return util.format("setTimeout(function()" +
+        "\n {console.log(%s)}, %s);",string, string);
 }
 
+function codeNcExec() {
+    return "var exec = require('child_process').exec;\n";
+}
+function codeNcSetTimeout(string) {
+    return util.format("setTimeout(function() {\n" +
+            "   exec('date', function(error, stdout, stderr) {\n"+
+            "       if(stdout) console.log(stdout);})" +
+            ";}, %s);\n", string);
+}
 fs.readFile('minitouch.script', function(err, data) {
     if(err) throw err;
     //array = data.toString().split("\n");
     var array = data.toString().split("\n");
-    var outfile = fs.createWriteStream('out.script');
+    var outfile = fs.createWriteStream('out.js');
     var basetime;
     var currenttime;
     outfile.on('error', function(err) { /* error handling */ });
@@ -25,6 +37,7 @@ fs.readFile('minitouch.script', function(err, data) {
         if(i == 0) {
             basetime = array[i].split(" ")[0];
             console.log("basetime", basetime);
+            outfile.write(codeNcExec());
         }
         currenttime = array[i].split(" ")[0];
         var time_out = currenttime - basetime;
@@ -32,7 +45,7 @@ fs.readFile('minitouch.script', function(err, data) {
             continue;
         }
         //console.log(codeFunction(time_out));
-        outfile.write(codeFunction(time_out)+"\n");
+        outfile.write(codeNcSetTimeout(time_out));
 
     }
     outfile.end();
