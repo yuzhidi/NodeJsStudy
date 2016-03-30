@@ -1,6 +1,24 @@
 /**
  * Created by wangliang on 29/3/2016.
+ *
+ * install and launch minitouch steps from minitouch README
+ * 1. run the run.sh in minitouch to install a minitouch to a android devices
+ * 1. adb forward tcp:1111 localabstract:minitouch
+ * 2. adb shell /data/local/tmp/minitouch
+ *
+ * minitouch.script record Web click event sent to android device through stf.
+ *  you can redirect the output to a file then rename the file minitouch.script
+ *  lib/units/device/plugins/touch/index.js
+      TouchConsumer.prototype._write = function(chunk) {
+      console.log(Date.now(),chunk.toString());
+      this.socket.stream.write(chunk)
+    }
+
  */
+
+
+
+
 var fs = require("fs");
 var util = require('util');
 
@@ -8,7 +26,6 @@ var net = require('net');
 
 var data = fs.readFileSync('minitouch.script');
 var array = data.toString().split("\n");
-//console.log(array);
 
 var HOST = '127.0.0.1';
 var PORT = 1111;
@@ -19,30 +36,22 @@ client.connect(PORT, HOST, function() {
 });
 
 client.on('data', function(data) {
-
-    // console.log('DATA: ' + data);
     process.stdout.write(data);
-    // Close the client socket completely
-    //  client.destroy();
-    //console.log(array);
     var originalOutfile = fs.createWriteStream('orginaltime.txt');
     var onceOutfileName = util.format("%s.txt", Date.now());
     console.log("outOutfile:", onceOutfileName);
     var onceOutfile = fs.createWriteStream(onceOutfileName);
+
     var basetime;
     var currenttime;
-    var STARTTIME = 1000;
+    var STARTTIME = 1000; //dalay start
     var originalTotal = 0;
     var actureTotal = 0;
+
     for(i in array) {
-        //console.log(array[i]);
-        //console.log(/[dcmu]*/.exec(array[i]));
-        //outfile.write(array[i]+"\n");
         var lineArray = array[i].split(" ");
         if (i == 0) {
             basetime = lineArray[0];
-            //console.log("basetime", basetime);
-            //outfile.write(codeNcExec());
         }
         currenttime = lineArray[0];
         var aTimeout = currenttime - basetime;
@@ -51,10 +60,8 @@ client.on('data', function(data) {
         }
         originalTotal += aTimeout;
         originalOutfile.write(aTimeout.toString()+ " " + originalTotal.toString()+"\n");
-        console.log(aTimeout);
+        //console.log(aTimeout);
         aTimeout += STARTTIME;
-        //console.log("arrylen", lineArray.length)
-        //console.log(codeFunction(aTimeout));
         var tmpCommand = "";
         for (var i = 1; i < lineArray.length; i++) {
             if(i==1) {
