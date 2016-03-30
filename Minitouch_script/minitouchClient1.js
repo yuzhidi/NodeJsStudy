@@ -45,11 +45,16 @@ client.connect(PORT, HOST, function() {
                 content += " " + lineArray[i];
             }
             console.log("content:", content, "time_out", time_out);
-
-            setTimeout(function(){
-                 console.log("client write", content);
-                client.write(content);
-            }, time_out);
+            var send = (function() {
+                 var context2 = content;
+                return function() {
+                    setTimeout(function(){
+                        console.log("client write", content);
+                        client.write(content);
+                    }, time_out);
+                }
+                } )();
+            send();
         }
     });
 });
