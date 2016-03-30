@@ -25,6 +25,10 @@ client.on('data', function(data) {
     // Close the client socket completely
     //  client.destroy();
     //console.log(array);
+    var originalOutfile = fs.createWriteStream('orginaltime.txt');
+    var onceOutfileName = util.format("%s.txt", Date.now());
+    console.log("outOutfile:", onceOutfileName);
+    var onceOutfile = fs.createWriteStream(onceOutfileName);
     var basetime;
     var currenttime;
     var STARTTIME = 1000;
@@ -43,6 +47,7 @@ client.on('data', function(data) {
         if (aTimeout < 0) {
             continue;
         }
+        originalOutfile.write(aTimeout.toString()+"\n");
         console.log(aTimeout);
         aTimeout += STARTTIME;
         //console.log("arrylen", lineArray.length)
@@ -57,13 +62,23 @@ client.on('data', function(data) {
 
         }
         tmpCommand += "\n";
+        var sendbasetime;
+        var notSend = true;
+        var sendinterval;
         //console.log("tmpCommand:", tmpCommand, "aTimeout", aTimeout);
         var send = (function() {
             var command = tmpCommand;
             return function() {
                 setTimeout(function(){
                     //console.log("client write", Date.now(), command);
-                    console.log(Date.now());
+                    var sendtime = Date.now();
+                    //console.log(sendtime);
+                    if(notSend) {
+                        notSend =false;
+                        sendbasetime =  sendtime;
+                    }
+                    sendinterval = sendtime - sendbasetime;
+                    onceOutfile.write(sendinterval.toString()+"\n");
                     client.write(command);
                 }, aTimeout);
             }
