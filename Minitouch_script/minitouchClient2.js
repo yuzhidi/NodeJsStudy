@@ -32,6 +32,8 @@ client.on('data', function(data) {
     var basetime;
     var currenttime;
     var STARTTIME = 1000;
+    var originalTotal = 0;
+    var actureTotal = 0;
     for(i in array) {
         //console.log(array[i]);
         //console.log(/[dcmu]*/.exec(array[i]));
@@ -47,7 +49,8 @@ client.on('data', function(data) {
         if (aTimeout < 0) {
             continue;
         }
-        originalOutfile.write(aTimeout.toString()+"\n");
+        originalTotal += aTimeout;
+        originalOutfile.write(aTimeout.toString()+ " " + originalTotal.toString()+"\n");
         console.log(aTimeout);
         aTimeout += STARTTIME;
         //console.log("arrylen", lineArray.length)
@@ -65,6 +68,7 @@ client.on('data', function(data) {
         var sendbasetime;
         var notSend = true;
         var sendinterval;
+
         //console.log("tmpCommand:", tmpCommand, "aTimeout", aTimeout);
         var send = (function() {
             var command = tmpCommand;
@@ -78,13 +82,15 @@ client.on('data', function(data) {
                         sendbasetime =  sendtime;
                     }
                     sendinterval = sendtime - sendbasetime;
-                    onceOutfile.write(sendinterval.toString()+"\n");
+                    actureTotal += sendinterval;
+                    onceOutfile.write(sendinterval.toString()+ " "+ actureTotal.toString()+ "\n");
                     client.write(command);
                 }, aTimeout);
             }
         } )();
         send();
     }
+
 });
 
 // Add a 'close' event handler for the client socket
