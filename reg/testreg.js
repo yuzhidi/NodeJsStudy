@@ -94,6 +94,9 @@ console.log("alist 1:"+alist[1]);
 for(var i=0, a;a=alist[i++];) {
     console.log("a:"+a);
 }
+console.log(/2134134/.test(arr));
+console.log(/2134134/.test(alist));
+console.log(/adbc/.test(alist));
 console.log("---- kill -------");
 var str = "kill    23134    21300014    231422 2323     2134134 ";
 var str2 = str.replace(/\s+/g, " ");
@@ -125,7 +128,7 @@ console.log("su".length);
 console.log(reg.test("su"));
 console.log(reg.test("sus"));
 console.log(reg.test("susdf"));
-console.log("======================= 1216 =============");
+console.log("======================= 1217 =============");
 console.log(reg.test("su "));
 console.log(reg.test("su sdfasf"));
 console.log(reg.test("su  "));
@@ -141,3 +144,5 @@ var obj1 =setTimeout(function() {
 },5000);
 console.log("========= study timeout =================");
 clearTimeout(obj0);
+console.log("========= test boot =================");
+console.log(/^(boot|kill)$|^boot[\0\s&;]|[\0\s&;]boot$|[\0\s&;]boot[\0\s;&]/.test(";boota"));
