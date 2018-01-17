@@ -24,35 +24,27 @@ client.listDevices()
 
 
 console.log(":");
- client.stat("052f922cc86debe0", "/data/local/tmp/minicap1.so")
-     .then(function(status){
-         console.log("29", status);
-         console.log("size", status.size);
-         //return client.stat("052f922cc86debe0", "/data/local/tmp/minicap.so")
-     //        .then(function(status) {
-     //            console.log("30", status);
-     //        }
-     //            .catch(function(err) {
-     //                console.log("err2");
-     //            })
-     //    )
-     })
-             //.then(function(status) {
-             //    console.log("30", status);
-             //}
-             //    .catch(function(err) {
-             //        console.log("err2");
-             //    })
-         //)
-     .catch(function(err) {
-         console.log("err", err);
-         client.stat("052f922cc86debe0", "/data/local/tmp/minicap.so")
-             .then(function(status){
-                 console.log("30", status)
-             })
-             .catch(function(err){
-                 console.log("err 30", status)
-             })
-     })
+client.stat("052f922cc86debe0", "/data/local/tmp/minicap.so")
+    .then(function(status){
+        console.log("29", status);
+        console.log("size", status.size);
+        return client.stat("052f922cc86debe0", "/data/local/tmp/minicap2.so")
+            .then(function(status) {
+                console.log("30", status);
+            })
+            .catch(function(err) {
+                console.log("err2");
+            })
+    })
+    .then(function(status) {
+        console.log("30", status);
+    })
+    //    .catch(function(err) {
+    //        console.log("err2");
+    //    })
+    //)
+    .catch(function(err) {
+        console.log("err 48", err);
+    })
 
 //console.log("size:"+status);
